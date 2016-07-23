@@ -28,6 +28,15 @@ public class GroupChatService extends WebSocketAdapter {
 
         ChatRepository chatRepository = getRepository();
         List<ChatEntry> allEntries = chatRepository.getAllEntries();
+
+        if (allEntries.isEmpty()) {
+            try {
+                sess.getRemote().sendString("no data");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         for (ChatEntry entry : allEntries) {
             try {
                 sess.getRemote().sendString(entry.toString());
