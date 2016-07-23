@@ -26,10 +26,11 @@ public class RandomChatService extends WebSocketAdapter {
             unpairedSessions.add(sess);
         } else {
             Session randomSession = getRandomUnpaired();
-            while (randomSession != null && !randomSession.isOpen()) {
+            while (randomSession == null || !randomSession.isOpen()) {
                 unpairedSessions.remove(randomSession);
                 randomSession = getRandomUnpaired();
             }
+
             unpairedSessions.remove(randomSession);
             sessionPairs.put(sess, randomSession);
             sessionPairs.put(randomSession, sess);
@@ -51,6 +52,8 @@ public class RandomChatService extends WebSocketAdapter {
 
     private Session getRandomUnpaired() {
         int size = unpairedSessions.size();
+        if (size == 0)
+            return null;
         int item = new Random().nextInt(size);
         int i = 0;
         for (Session session : unpairedSessions) {
@@ -111,6 +114,7 @@ public class RandomChatService extends WebSocketAdapter {
             Session sessionPair = sessionPairs.remove(session);
             sessionPair.close();
             sessionPairs.remove(sessionPair);
+            System.out.printf("pair also closed");
         }
         sessionPairs.remove(session);
     }
