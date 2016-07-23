@@ -15,4 +15,13 @@
 		<servlet-name>enterTRAINment server</servlet-name>
 		<url-pattern>/webapi/*</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>websocket servlet</servlet-name>
+		<servlet-class>ge.edu.freeuni.android.entertrainment.server.services.GroupChatServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>websocket servlet</servlet-name>
+		<url-pattern>/webapi/groupchat</url-pattern>
+	</servlet-mapping>
 </web-app>

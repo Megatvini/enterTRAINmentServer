@@ -131,6 +131,24 @@
             <version>20160212</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.2.5.v20141112</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.2.5.v20141112</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-server</artifactId>
+            <version>9.2.5.v20141112</version>
+        </dependency>
+
     </dependencies>
     <properties>
         <jersey.version>2.22</jersey.version>
