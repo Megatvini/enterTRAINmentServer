@@ -49,7 +49,9 @@ public class GroupChatService extends WebSocketAdapter {
 
         for (Session userSession: sessionSet) {
             try {
-                userSession.getRemote().sendString(message);
+                if (userSession.isOpen()) {
+                    userSession.getRemote().sendString(message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
