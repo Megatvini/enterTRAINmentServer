@@ -68,6 +68,7 @@ public class RandomChatService extends WebSocketAdapter {
         Session session = getSession();
         Session pair = sessionPairs.get(session);
         sendTextSafe(pair, message);
+        sendTextSafe(session, message);
     }
 
     private void sendTextSafe(Session session, String message) {
@@ -87,6 +88,9 @@ public class RandomChatService extends WebSocketAdapter {
     public void onWebSocketClose(int statusCode, String reason) {
         super.onWebSocketClose(statusCode, reason);
         notifyPair();
+        Session session = getSession();
+        if (session != null)
+            session.close();
         System.out.println("Socket Closed: [" + statusCode + "] " + reason);
     }
 
@@ -94,6 +98,9 @@ public class RandomChatService extends WebSocketAdapter {
     public void onWebSocketError(Throwable cause) {
         super.onWebSocketError(cause);
         notifyPair();
+        Session session = getSession();
+        if (session != null)
+            session.close();
         cause.printStackTrace(System.err);
     }
 
