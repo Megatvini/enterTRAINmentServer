@@ -18,6 +18,10 @@
 	<servlet>
 		<servlet-name>websocket servlet</servlet-name>
 		<servlet-class>ge.edu.freeuni.android.entertrainment.server.services.GroupChatServlet</servlet-class>
+		<init-param>
+			<param-name>maxIdleTime</param-name>
+			<param-value>86400000</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>

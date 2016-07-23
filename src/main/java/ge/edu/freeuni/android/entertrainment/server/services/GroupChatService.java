@@ -2,7 +2,7 @@ package ge.edu.freeuni.android.entertrainment.server.services;
 
 import ge.edu.freeuni.android.entertrainment.server.model.ChatEntry;
 import ge.edu.freeuni.android.entertrainment.server.model.GroupChatRepository;
-import ge.edu.freeuni.android.entertrainment.server.model.Repository;
+import ge.edu.freeuni.android.entertrainment.server.model.ChatRepository;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
@@ -17,7 +17,7 @@ public class GroupChatService extends WebSocketAdapter {
             Collections.synchronizedSet(new HashSet<Session>());
 
 
-    protected Repository getRepository() {
+    protected ChatRepository getRepository() {
         return GroupChatRepository.getInstance();
     }
 
@@ -26,8 +26,8 @@ public class GroupChatService extends WebSocketAdapter {
         super.onWebSocketConnect(sess);
         sessionSet.add(sess);
 
-        Repository repository = getRepository();
-        List<ChatEntry> allEntries = repository.getAllEntries();
+        ChatRepository chatRepository = getRepository();
+        List<ChatEntry> allEntries = chatRepository.getAllEntries();
         for (ChatEntry entry : allEntries) {
             try {
                 sess.getRemote().sendString(entry.toString());
@@ -43,9 +43,9 @@ public class GroupChatService extends WebSocketAdapter {
     public void onWebSocketText(String message) {
         super.onWebSocketText(message);
 
-        Repository repository = getRepository();
+        ChatRepository chatRepository = getRepository();
         ChatEntry chatEntry = ChatEntry.fromJson(message);
-        repository.addEntry(chatEntry);
+        chatRepository.addEntry(chatEntry);
 
         for (Session userSession: sessionSet) {
             try {

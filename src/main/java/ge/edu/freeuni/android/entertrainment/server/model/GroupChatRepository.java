@@ -1,13 +1,11 @@
 package ge.edu.freeuni.android.entertrainment.server.model;
 
-import org.eclipse.jetty.websocket.api.Session;
-
 import java.util.*;
 
 /**
  * Created by Nika Doghonadze
  */
-public class GroupChatRepository implements Repository{
+public class GroupChatRepository implements ChatRepository {
     private static GroupChatRepository instance;
 
     private Set<String> users;

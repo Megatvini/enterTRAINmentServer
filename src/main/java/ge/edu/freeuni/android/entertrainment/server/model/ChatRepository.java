@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Nika Doghonadze
  */
-public interface Repository {
+public interface ChatRepository {
     List<ChatEntry> getAllEntries();
     void addEntry(ChatEntry chatEntry);
     void clearEntries();
