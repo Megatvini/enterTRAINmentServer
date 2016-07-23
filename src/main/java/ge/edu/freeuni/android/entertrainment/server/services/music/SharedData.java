@@ -60,22 +60,14 @@ public class SharedData {
         try {
             Music topMusic = getTopMusic();
             if (topMusic != null) {
-                byte[] musicBytes;
-                String fileName = topMusic.getFilePath();
-                File iniFile = new File(fileName);
-                try {
-                    RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "r");
-                    long fileLengthInBytes = randomAccessFile.length();
-                    this.currentFileLengthInBytes = (int) fileLengthInBytes;
-                    byte[] tempBytes = new byte[(int) fileLengthInBytes];
-                    this.data = tempBytes;
-                    randomAccessFile.readFully(tempBytes);
-                    currentSongDurationInSecs = getDurationWithMagic(iniFile);
+                byte[] musicBytes = MusicDo.getMusicData(topMusic.getId());
+                if (musicBytes != null) {
+                    int fileLengthInBytes = musicBytes.length;
+                    this.currentFileLengthInBytes = fileLengthInBytes;
+                    this.data = musicBytes;
+                    currentSongDurationInSecs = topMusic.getDuration();
                     ratioInSec = (int) (fileLengthInBytes / currentSongDurationInSecs);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-
             }
             notEmpty.signalAll();
         }finally {

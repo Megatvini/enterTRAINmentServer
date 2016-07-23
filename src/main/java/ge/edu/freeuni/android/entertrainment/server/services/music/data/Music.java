@@ -18,22 +18,21 @@ public class Music  implements Cloneable{
     private String imagePath;
     @XmlElement
     private String voted = "null";
+    private int duration;
 
     @XmlTransient
     private  String filePath;
 
 
-    public Music(String id , String name, int rating, String imagePath) {
+    public Music(int duration, String id , String name, int rating, String imagePath) {
         this.id = id;
+        this.duration = duration;
         this.name = name;
         this.rating = rating;
         this.imagePath = imagePath;
     }
 
-    public Music(String id , String name, int rating, String imagePath, String filePath) {
-       this(id,name,rating,imagePath);
-        this.filePath = filePath;
-    }
+
 
     public String getName() {
         return name;
@@ -89,6 +88,14 @@ public class Music  implements Cloneable{
         return obj instanceof Music && ((Music) obj).getId().equals(this.getId());
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     @Override
     public Music clone() throws CloneNotSupportedException {
         Music clone = (Music) super.clone();
@@ -99,4 +106,6 @@ public class Music  implements Cloneable{
         clone.setImagePath(imagePath);
         return clone;
     }
+
+
 }
