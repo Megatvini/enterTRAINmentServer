@@ -36,6 +36,16 @@ public class MapService {
     }
 
     @GET
+    @Path("destReached/{destination}")
+    public String destinationReached(@PathParam("destination") String destination) {
+        JSONObject jsonObject = new JSONObject();
+        if (destination == "Tbilisi")
+            jsonObject.put("destination reached", "true");
+        else jsonObject.put("destination reached", "false");
+        return jsonObject.toString();
+    }
+
+    @GET
     @Path("station/{station}")
     public StationInfo getStationInfo(@PathParam("station") String station){
         StationInfo stationInfo = new StationInfo(station, "01:28", 0);
