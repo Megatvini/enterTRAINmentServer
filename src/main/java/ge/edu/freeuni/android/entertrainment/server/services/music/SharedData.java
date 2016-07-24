@@ -33,7 +33,6 @@ public class SharedData {
 
     final Lock lock = new ReentrantLock();
     final Condition notEmpty = lock.newCondition();
-    private MusicDo musicDo;
 
     public static SharedData getInstance()
     {
@@ -47,11 +46,10 @@ public class SharedData {
     private SharedData() {
 
     }
-    public void init(String directory, MusicDo musicDo){
-        this.musicDo = musicDo;
+    public void init(){
         startDate = new Date();
         musicHolder = MusicHolder.getInstance();
-        musicHolder.init(directory);
+        musicHolder.init();
         updateParameters();
     }
 
@@ -76,7 +74,10 @@ public class SharedData {
     }
 
     private Music getTopMusic() {
-        return musicHolder.getMusics().get(0);
+        List<Music> musics = musicHolder.getMusics();
+        if (musics!= null && musics.size()!=0)
+            return musics.get(0);
+        return null;
     }
 
 

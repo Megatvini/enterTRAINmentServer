@@ -28,12 +28,10 @@ public class Listener implements ServletContextListener,
     // ServletContextListener implementation
     // -------------------------------------------------------
     public void contextInitialized(ServletContextEvent sce) {
-        ServletContext servletContext = sce.getServletContext();
-        String realPath = servletContext.getRealPath("musics");
-        MusicDo musicDo = new MusicDo();
+
         try {
-            musicDo.createDatabase();
-            SharedData.getInstance().init(realPath,musicDo);
+            MusicDo.createDatabase();
+            SharedData.getInstance().init();
             new DataUpdater().start();
         } catch (SQLException e) {
             e.printStackTrace();
