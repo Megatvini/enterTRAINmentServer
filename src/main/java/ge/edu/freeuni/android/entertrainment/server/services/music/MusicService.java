@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils.getResultMusics;
+
 @Consumes("application/json")
 @Produces("application/json")
 @Path("songs")
@@ -52,37 +54,13 @@ public class MusicService {
     }
 
 
-    private ArrayList<Music> getResultMusics(String ip) throws CloneNotSupportedException {
-        List<Music> musics = MusicDo.getMusics();
-        ArrayList<Music> resultMusics = new ArrayList<>();
-        if (musics != null) {
-            for (Music music1 : musics){
-                Music music2 = music1.clone();
-                if (downvoted(ip,music1)) {
-                    music2.setVoted("up");
-                }else if(upvoted(ip,music1))
-                    music2.setVoted("down");
-                else
-                    music2.setVoted("null");
-                resultMusics.add(music2);
-            }
-        }
-        return resultMusics;
-    }
-
-    private boolean upvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("up");
-    }
-
-    private boolean downvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("down");
-    }
 
     @POST
     @Path("{songId}/downvote")
     public Response downVote(@PathParam("songId") String songId, @Context HttpServletRequest req ) throws CloneNotSupportedException {
         String ip = req.getRemoteAddr();
         MusicDo.vote(songId,-1,"down",ip);
+
         ArrayList<Music> resultMusics = getResultMusics(ip);
         MusicUtils.sortMusics(resultMusics);
         return Response.ok().entity(resultMusics).build();
@@ -96,11 +74,14 @@ public class MusicService {
         String tmp= "/tmp/temp.mp3";
         writeFile(fileBytes, tmp);
         String id = UUID.randomUUID().toString();
-        Music music = new Music((int) MusicUtils.getDurationWithMagic(tmp),id,"random_name",0,"");
+        String name = MusicUtils.getName(tmp);
+        int duration = (int) MusicUtils.getDurationWithMagic(tmp);
+        Music music = new Music(duration,id, name,0,"http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg");
         MusicDo.saveMusic(music,fileBytes);
         Music music1 = MusicDo.getMusic(id);
         System.out.println(music1);
         MusicHolder.getInstance().init();
+        SharedMusicService.updateAll();
         return id;
     }
 

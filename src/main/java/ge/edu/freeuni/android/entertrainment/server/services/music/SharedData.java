@@ -4,20 +4,13 @@ package ge.edu.freeuni.android.entertrainment.server.services.music;
 import ge.edu.freeuni.android.entertrainment.server.services.music.DO.MusicDo;
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.Music;
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.MusicHolder;
-import org.tritonus.share.sampled.file.TAudioFileFormat;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import static ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils.getDurationWithMagic;
 
 public class SharedData {
     private static SharedData ourInstance = null;
@@ -65,6 +58,7 @@ public class SharedData {
                     this.data = musicBytes;
                     currentSongDurationInSecs = topMusic.getDuration();
                     ratioInSec = (int) (fileLengthInBytes / currentSongDurationInSecs);
+                    SharedMusicService.updateAll();
                 }
             }
             notEmpty.signalAll();

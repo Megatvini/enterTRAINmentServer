@@ -1,6 +1,7 @@
 package ge.edu.freeuni.android.entertrainment.server.services.music.data;
 
 import ge.edu.freeuni.android.entertrainment.server.services.music.DO.MusicDo;
+import ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,13 +39,8 @@ public class MusicHolder {
 
     public void newSong() {
         if (musics != null && musics.size() >0) {
-            musics.remove(0);
-            Collections.sort(musics, new Comparator<Music>() {
-                @Override
-                public int compare(Music o1, Music o2) {
-                    return o1.getName().compareTo(o2.getName());
-                }
-            });
+            MusicDo.resetRating(musics.get(0).getId());
+            MusicUtils.sortMusics(musics);
         }
     }
 

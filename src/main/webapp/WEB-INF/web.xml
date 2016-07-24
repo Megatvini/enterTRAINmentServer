@@ -41,4 +41,17 @@
 		<servlet-name>websocket servlet randomchat</servlet-name>
 		<url-pattern>/webapi/randomchat</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>websocket servlet music</servlet-name>
+		<servlet-class>ge.edu.freeuni.android.entertrainment.server.services.music.SharedMusicServlet</servlet-class>
+		<init-param>
+			<param-name>maxIdleTime</param-name>
+			<param-value>86400000</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>websocket servlet music</servlet-name>
+		<url-pattern>/webapi/song_socket</url-pattern>
+	</servlet-mapping>
 </web-app>

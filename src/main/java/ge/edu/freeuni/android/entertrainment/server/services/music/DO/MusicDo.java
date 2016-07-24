@@ -151,6 +151,26 @@ public class MusicDo {
 
     }
 
+
+    public static void resetRating(String musicId){
+        Connection connection =  getConnection();
+        try {
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String sql = "UPDATE MUSICS SET RATING = 0  WHERE ID = '"+musicId+"'";
+                statement.executeUpdate(sql);
+                sql = "DELETE FROM VOTES WHERE MUSIC_ID = ?";
+                PreparedStatement pstm = connection.prepareStatement(sql);
+                pstm.setString(1,musicId);
+                pstm.executeUpdate();
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static List<Music> getMusics(){
         Connection connection = getConnection();
         try {
