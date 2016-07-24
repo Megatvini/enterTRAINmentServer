@@ -45,7 +45,7 @@ public class MusicUtils {
         Collections.sort(musics, new Comparator<Music>() {
             @Override
             public int compare(Music o1, Music o2) {
-                return ((Integer) o1.getRating()).compareTo (o2.getRating());
+                return ((Integer) o2.getRating()).compareTo (o1.getRating());
             }
         });
 
