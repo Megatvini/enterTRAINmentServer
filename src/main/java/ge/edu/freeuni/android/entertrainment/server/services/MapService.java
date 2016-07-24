@@ -6,19 +6,34 @@ import com.google.code.geocoder.model.GeocodeResponse;
 import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.code.geocoder.model.GeocoderResult;
 import com.maxmind.geoip.Location;
-import com.maxmind.geoip.LookupService;
 import ge.edu.freeuni.android.entertrainment.server.model.StationInfo;
+import org.json.JSONObject;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.List;
 
 @Path("/map")
+@Produces({MediaType.APPLICATION_JSON})
 public class MapService {
+
+    @GET
+    @Path("location")
+    public String getLocation() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Location curr = getCurrentLocation();
+            jsonObject.put("latitude", curr.latitude);
+            jsonObject.put("longitude", curr.longitude);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
 
     @GET
     @Path("station/{station}")
@@ -59,17 +74,10 @@ public class MapService {
     }
 
     private Location getCurrentLocation() throws IOException {
-        LookupService cl = new LookupService("/var/geolite/GeoLiteCity.dat",
-                LookupService.GEOIP_MEMORY_CACHE | LookupService.GEOIP_CHECK_CACHE);
-        InetAddress server_ip = getIp();
-        Location location = cl.getLocation(server_ip);
-        return location;
-    }
-
-    private InetAddress getIp() throws UnknownHostException {
-        InetAddress ip = InetAddress.getLocalHost();
-        System.out.println("Current IP address : " + ip.getHostAddress());
-        return ip;
+        Location loc = new Location();
+        loc.latitude = 41.7f;
+        loc.longitude = 44.8f;
+        return loc;
     }
 
     /*
