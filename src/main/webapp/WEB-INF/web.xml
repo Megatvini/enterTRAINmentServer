@@ -15,4 +15,30 @@
 		<servlet-name>enterTRAINment server</servlet-name>
 		<url-pattern>/webapi/*</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<servlet-name>websocket servlet groupchat</servlet-name>
+		<servlet-class>ge.edu.freeuni.android.entertrainment.server.services.GroupChatServlet</servlet-class>
+		<init-param>
+			<param-name>maxIdleTime</param-name>
+			<param-value>86400000</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>websocket servlet groupchat</servlet-name>
+		<url-pattern>/webapi/groupchat</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>websocket servlet randomchat</servlet-name>
+		<servlet-class>ge.edu.freeuni.android.entertrainment.server.services.RandomChatServlet</servlet-class>
+		<init-param>
+			<param-name>maxIdleTime</param-name>
+			<param-value>86400000</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>websocket servlet randomchat</servlet-name>
+		<url-pattern>/webapi/randomchat</url-pattern>
+	</servlet-mapping>
 </web-app>
