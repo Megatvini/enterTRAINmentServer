@@ -61,13 +61,13 @@ public class SharedMusicService  extends WebSocketAdapter{
     }
 
     public static void updateAll() {
-        List<Music> musics = MusicDo.getMusics();
-        MusicUtils.sortMusics(musics);
-        String s = MusicUtils.fromMusicArray(musics);
+//        List<Music> musics = MusicDo.getMusics();
+//        MusicUtils.sortMusics(musics);
+//        String s = MusicUtils.fromMusicArray(musics);
         for (Session session: sessionSet){
             if (session.isOpen()){
                 try {
-                    session.getRemote().sendString(s);
+                    session.getRemote().sendString("update");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

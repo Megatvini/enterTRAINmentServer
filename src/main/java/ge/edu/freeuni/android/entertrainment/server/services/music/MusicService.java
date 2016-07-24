@@ -7,17 +7,14 @@ import ge.edu.freeuni.android.entertrainment.server.services.music.data.MusicHol
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-
-import static ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils.getResultMusics;
 
 @Consumes("application/json")
 @Produces("application/json")
@@ -26,11 +23,17 @@ public class MusicService {
 
     @GET
     @Path("shared")
-    public Response sharedMusic(){
-        List<Music> musics = MusicDo.getMusics();
-        MusicUtils.sortMusics(musics);
-        return Response.ok().entity(musics).build();
+    public Response sharedMusic(@Context HttpServletRequest  req) throws CloneNotSupportedException {
+        return playListData(req);
     }
+
+    private Response playListData(@Context HttpServletRequest req) {
+        String ip  = req.getRemoteAddr();
+        List<Music> resultMusics = MusicUtils.getResultMusics(ip);
+        MusicUtils.sortMusics(resultMusics);
+        return Response.ok().entity(resultMusics).build();
+    }
+
     @GET
     @Path("offered")
     public Response offeredMusics(){
@@ -44,26 +47,27 @@ public class MusicService {
     @POST
     @Path("shared/{songId}/upvote")
     public Response upVote(@PathParam("songId") String songId, @Context HttpServletRequest req) throws CloneNotSupportedException {
-        System.out.println("upvote");
         String ip = req.getRemoteAddr();
-        MusicDo.vote(songId,1,"up",ip);
-        ArrayList<Music> resultMusics = getResultMusics(ip);
-        MusicUtils.sortMusics(resultMusics);
-        return Response.ok().entity(resultMusics).build();
+        if(!MusicUtils.upvoted(ip,songId)) {
+            MusicDo.vote(songId, 1, "up", ip);
+        }
+//        SharedMusicService.updateAll();
+
+        return playListData(req);
 
     }
 
 
 
     @POST
-    @Path("{songId}/downvote")
+    @Path("shared/{songId}/downvote")
     public Response downVote(@PathParam("songId") String songId, @Context HttpServletRequest req ) throws CloneNotSupportedException {
         String ip = req.getRemoteAddr();
-        MusicDo.vote(songId,-1,"down",ip);
-
-        ArrayList<Music> resultMusics = getResultMusics(ip);
-        MusicUtils.sortMusics(resultMusics);
-        return Response.ok().entity(resultMusics).build();
+        if  (!MusicUtils.downvoted(ip,  songId)) {
+            MusicDo.vote(songId, -1, "down", ip);
+        }
+//        SharedMusicService.updateAll();
+        return playListData(req);
     }
 
     @PUT
