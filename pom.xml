@@ -149,6 +149,17 @@
             <version>9.2.5.v20141112</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.geocoder-java</groupId>
+            <artifactId>geocoder-java</artifactId>
+            <version>0.16</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.maxmind.geoip</groupId>
+            <artifactId>geoip-api</artifactId>
+            <version>1.2.11</version>
+        </dependency>
     </dependencies>
     <properties>
         <jersey.version>2.22</jersey.version>
