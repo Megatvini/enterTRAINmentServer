@@ -39,7 +39,7 @@ public class MapService {
     @Path("destReached/{destination}")
     public String destinationReached(@PathParam("destination") String destination) {
         JSONObject jsonObject = new JSONObject();
-        if (destination == "Tbilisi")
+        if (destination.equals("Tbilisi"))
             jsonObject.put("destination reached", "true");
         else jsonObject.put("destination reached", "false");
         return jsonObject.toString();
