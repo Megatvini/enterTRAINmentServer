@@ -26,14 +26,18 @@ public class MusicService {
     @Path("shared")
     public Response sharedMusic(){
         List<Music> musics = MusicDo.getMusics();
+        MusicUtils.sortMusics(musics);
         return Response.ok().entity(musics).build();
     }
     @GET
     @Path("offered")
     public Response offeredMusics(){
         List<Music> musics = MusicDo.getMusics();
+        MusicUtils.sortMusics(musics);
         return Response.ok().entity(musics).build();
     }
+
+
 
     @POST
     @Path("shared/{songId}/upvote")
@@ -42,6 +46,7 @@ public class MusicService {
         String ip = req.getRemoteAddr();
         MusicDo.vote(songId,1,"up",ip);
         ArrayList<Music> resultMusics = getResultMusics(ip);
+        MusicUtils.sortMusics(resultMusics);
         return Response.ok().entity(resultMusics).build();
 
     }
@@ -79,6 +84,7 @@ public class MusicService {
         String ip = req.getRemoteAddr();
         MusicDo.vote(songId,-1,"down",ip);
         ArrayList<Music> resultMusics = getResultMusics(ip);
+        MusicUtils.sortMusics(resultMusics);
         return Response.ok().entity(resultMusics).build();
     }
 

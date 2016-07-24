@@ -9,9 +9,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class MusicUtils {
 
@@ -40,6 +38,16 @@ public class MusicUtils {
 
 
         return durationInSeconds;
+
+    }
+
+    public static void sortMusics(List<Music> musics){
+        Collections.sort(musics, new Comparator<Music>() {
+            @Override
+            public int compare(Music o1, Music o2) {
+                return ((Integer) o1.getRating()).compareTo (o2.getRating());
+            }
+        });
 
     }
 }
