@@ -38,7 +38,7 @@ public class MapService {
     @GET
     @Path("station/{station}")
     public StationInfo getStationInfo(@PathParam("station") String station){
-        StationInfo stationInfo = new StationInfo(station, "", 0);
+        StationInfo stationInfo = new StationInfo(station, "01:28", 0);
 
         estimateTimeAndDistLeft(station, stationInfo);
         return stationInfo;
@@ -49,11 +49,20 @@ public class MapService {
             Location curr = getCurrentLocation();
             Location next = getStaionLocation(station);
             double distance = calculateDistance(curr.latitude, next.latitude, curr.longitude, next.longitude);
-            stationInfo.setDistance(distance);
+            stationInfo.setDistance(round(distance, 2));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
     }
 
     private Location getStaionLocation(String station) throws IOException {
