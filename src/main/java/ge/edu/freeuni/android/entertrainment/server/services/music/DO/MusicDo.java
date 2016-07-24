@@ -53,6 +53,9 @@ public class MusicDo {
             stmt.executeUpdate(createMusicTable);
             stmt.executeUpdate(createVotesTable);
         }
+        if (connection != null) {
+            connection.close();
+        }
 
 
     }
@@ -61,7 +64,6 @@ public class MusicDo {
         Connection connection = getConnection();
         try {
             if (connection != null) {
-
                 Statement statement = connection.createStatement();
                 String query = "SELECT ID, MUSIC_NAME, RATING, IMAGE_PATH, DURATION FROM MUSICS WHERE ID = '"+musicId+"'";
                 ResultSet resultSet = statement.executeQuery(query);
@@ -71,12 +73,16 @@ public class MusicDo {
                     int rating = resultSet.getInt("RATING");
                     int duration = resultSet.getInt("DURATION");
                     String imagePath = resultSet.getString("IMAGE_PATH");
+                    connection.close();
                     return new Music(duration,id,name,rating,imagePath);
                 }
+                connection.close();
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -92,6 +98,7 @@ public class MusicDo {
                 if ( resultSet.next() ) {
                     byte[] res = resultSet.getBytes("MUSIC_DATA");
                     System.out.println(res.length);
+                    connection.close();
                     return res;
                 }
             }
@@ -162,6 +169,7 @@ public class MusicDo {
                     Music music = new Music(duration,id,name,rating,imagePath);
                     ans.add(music);
                 }
+                connection.close();
                 return ans;
             }
         } catch (SQLException e) {
@@ -180,6 +188,7 @@ public class MusicDo {
                 pstm.setString(2,ip);
                 ResultSet resultSet = pstm.executeQuery();
                 if(resultSet.next()){
+                    connection.close();
                     return resultSet.getString("VOTE");
                 }
                 connection.close();

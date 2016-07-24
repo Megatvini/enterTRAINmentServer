@@ -48,17 +48,19 @@ public class MusicService {
 
 
     private ArrayList<Music> getResultMusics(String ip) throws CloneNotSupportedException {
-        List<Music> musics = MusicHolder.getInstance().getMusics();
+        List<Music> musics = MusicDo.getMusics();
         ArrayList<Music> resultMusics = new ArrayList<>();
-        for (Music music1 : musics){
-            Music music2 = music1.clone();
-            if (downvoted(ip,music1)) {
-                music2.setVoted("up");
-            }else if(upvoted(ip,music1))
-                music2.setVoted("down");
-            else
-                music2.setVoted("null");
-            resultMusics.add(music2);
+        if (musics != null) {
+            for (Music music1 : musics){
+                Music music2 = music1.clone();
+                if (downvoted(ip,music1)) {
+                    music2.setVoted("up");
+                }else if(upvoted(ip,music1))
+                    music2.setVoted("down");
+                else
+                    music2.setVoted("null");
+                resultMusics.add(music2);
+            }
         }
         return resultMusics;
     }
