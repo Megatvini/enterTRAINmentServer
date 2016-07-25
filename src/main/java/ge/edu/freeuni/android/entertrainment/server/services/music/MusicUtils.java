@@ -76,30 +76,28 @@ public class MusicUtils {
 
 
 
-    public static ArrayList<Music> getResultMusics(String ip) throws CloneNotSupportedException {
+    public static List<Music> getResultMusics(String ip)  {
         List<Music> musics = MusicDo.getMusics();
-        ArrayList<Music> resultMusics = new ArrayList<>();
         if (musics != null) {
-            for (Music music1 : musics){
-                Music music2 = music1.clone();
-                if (downvoted(ip,music1)) {
-                    music2.setVoted("up");
-                }else if(upvoted(ip,music1))
-                    music2.setVoted("down");
+            for (Music music : musics){
+                if (downvoted(ip,music.getId())) {
+                    music.setVoted("down");
+                }else if(upvoted(ip,music.getId()))
+                    music.setVoted("up");
                 else
-                    music2.setVoted("null");
-                resultMusics.add(music2);
+                    music.setVoted("null");
+
             }
         }
-        return resultMusics;
+        return musics;
     }
 
-    public  static boolean upvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("up");
+    public  static boolean upvoted(String ip, String  musicId){
+        return MusicDo.getVote(ip,musicId).equals("up");
     }
 
-    public  static boolean downvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("down");
+    public  static boolean downvoted(String ip, String musicId){
+        return MusicDo.getVote(ip,musicId).equals("down");
     }
 
 
