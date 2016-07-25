@@ -38,7 +38,6 @@ public class MusicService {
     @Path("offered")
     public Response offeredMusics(){
         List<Music> musics = MusicDo.getMusics();
-        MusicUtils.sortMusics(musics);
         return Response.ok().entity(musics).build();
     }
 
