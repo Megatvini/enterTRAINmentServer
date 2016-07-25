@@ -8,6 +8,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
+import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
@@ -23,6 +24,7 @@ public class VideoStreamingService {
     @Produces("audio/mp3")
     public Response streamAudio(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
+        filename = URLDecoder.decode(filename,"UTF-8");
         File file = Utils.getFileFromResources("music/"+filename);
         if (file == null)
             throw new FileNotFoundException();
@@ -34,6 +36,7 @@ public class VideoStreamingService {
     @Produces("video/mp4")
     public Response streamVideo(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
+        filename = URLDecoder.decode(filename,"UTF-8");
         File file = Utils.getFileFromResources("video/"+filename);
         if (file == null)
             throw new FileNotFoundException();
