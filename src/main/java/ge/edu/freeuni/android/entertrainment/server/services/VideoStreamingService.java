@@ -5,7 +5,6 @@ import ge.edu.freeuni.android.entertrainment.server.model.MediaStreamer;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
