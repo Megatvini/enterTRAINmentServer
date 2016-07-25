@@ -29,6 +29,7 @@ public class MapService {
             Location curr = getCurrentLocation();
             jsonObject.put("latitude", curr.latitude);
             jsonObject.put("longitude", curr.longitude);
+            jsonObject.put("next_station", "Gori");
         } catch (IOException e) {
             e.printStackTrace();
         }
