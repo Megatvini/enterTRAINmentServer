@@ -2,6 +2,7 @@ package ge.edu.freeuni.android.entertrainment.server.services;
 
 import ge.edu.freeuni.android.entertrainment.server.Utils;
 import ge.edu.freeuni.android.entertrainment.server.model.MediaStreamer;
+import ge.edu.freeuni.android.entertrainment.server.services.music.DO.MusicDo;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
@@ -12,6 +13,7 @@ import java.net.URLDecoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -24,46 +26,28 @@ public class VideoStreamingService {
     @Produces("audio/mp3")
     public Response streamAudio(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
-        filename = URLDecoder.decode(filename,"UTF-8");
-        File file = Utils.getFileFromResources("music/"+filename);
-        if (file == null)
-            throw new FileNotFoundException();
 
-        return buildStream(file, range);
+
+        return buildStream(filename, range);
     }
     @GET
     @Path("video/{filename}")
     @Produces("video/mp4")
     public Response streamVideo(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
-        filename = URLDecoder.decode(filename,"UTF-8");
-        File file = Utils.getFileFromResources("video/"+filename);
-        if (file == null)
-            throw new FileNotFoundException();
 
-        return buildStream(file, range);
+
+        return buildStream(filename, range);
     }
 
-    private Response buildStream(final File asset, final String range) throws Exception {
+    private Response buildStream(final String  fileName, final String range) throws Exception {
         // range not requested : Firefox, Opera, IE do not send range headers
+        byte[] musicData = MusicDo.getMusicData(fileName);
+        if (musicData == null){
+            return Response.serverError().build();
+        }
         if (range == null) {
-            StreamingOutput streamer = new StreamingOutput() {
-                @Override
-                public void write(final OutputStream output) throws IOException, WebApplicationException {
-
-                    final FileChannel inputChannel = new FileInputStream(asset).getChannel();
-                    final WritableByteChannel outputChannel = Channels.newChannel(output);
-                    try {
-                        inputChannel.transferTo(0, inputChannel.size(), outputChannel);
-                    } finally {
-
-                        // closing the channels
-                        inputChannel.close();
-                        outputChannel.close();
-                    }
-                }
-            };
-            return Response.ok(streamer).status(200).header(HttpHeaders.CONTENT_LENGTH, asset.length()).header("Accept-Ranges","bytes").build();
+            return Response.ok(musicData).status(200).header(HttpHeaders.CONTENT_LENGTH, musicData.length).header("Accept-Ranges","bytes").build();
         }
 
         String[] ranges = range.split("=")[1].split("-");
@@ -74,24 +58,20 @@ public class VideoStreamingService {
         int chunk_size = 204800000;
 
         int to = chunk_size + from;
-        if (to >= asset.length()) {
-            to = (int) (asset.length() - 1);
+        if (to >= musicData.length) {
+            to = musicData.length - 1;
         }
         if (ranges.length == 2) {
             to = Integer.parseInt(ranges[1]);
         }
 
-        final String responseRange = String.format("bytes %d-%d/%d", from, to, asset.length());
-        final RandomAccessFile raf = new RandomAccessFile(asset, "r");
-        raf.seek(from);
+        final String responseRange = String.format("bytes %d-%d/%d", from, to, musicData.length);
+        byte[] bytes = Arrays.copyOfRange(musicData,from,to);
 
-        final int len = to - from + 1;
-        final MediaStreamer streamer = new MediaStreamer(len, raf);
-        Response.ResponseBuilder res = Response.ok(streamer).status(206)
+        Response.ResponseBuilder res = Response.ok(bytes).status(206)
                 .header("Accept-Ranges", "bytes")
                 .header("Content-Range", responseRange)
-                .header(HttpHeaders.CONTENT_LENGTH, streamer.getLenth())
-                .header(HttpHeaders.LAST_MODIFIED, new Date(asset.lastModified()));
+                .header(HttpHeaders.CONTENT_LENGTH, bytes.length);
         return res.build();
     }
 }

@@ -3,6 +3,7 @@ package ge.edu.freeuni.android.entertrainment.server.services.music.DO;
 
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.Music;
 
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,6 +99,24 @@ public class MusicDo {
                 if ( resultSet.next() ) {
                     byte[] res = resultSet.getBytes("MUSIC_DATA");
                     System.out.println(res.length);
+                    connection.close();
+                    return res;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public static InputStream getMusicDataStream(String musicId){
+        Connection connection = getConnection();
+        try {
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String query = "SELECT MUSICS.MUSIC_DATA FROM MUSICS  WHERE MUSICS.ID = '"+musicId+"'";
+                ResultSet resultSet = statement.executeQuery(query);
+                if ( resultSet.next() ) {
+                    InputStream res = resultSet.getBinaryStream("MUSIC_DATA");
                     connection.close();
                     return res;
                 }

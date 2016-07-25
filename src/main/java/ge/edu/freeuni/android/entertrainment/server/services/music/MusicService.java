@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Consumes("application/json")
 @Produces("application/json")
@@ -40,14 +41,7 @@ public class MusicService {
     @GET
     @Path("offered")
     public Response offeredMusics(){
-        File[] files = MusicUtils.filesList("music");
-        List<Music> musics = new ArrayList<>();
-        for (File file: files){
-            String name = MusicUtils.nameFromFile(file);
-            String name1 = file.getName();
-            Music music = new Music(0,name1,name,0,defaultImagePath);
-            musics.add(music);
-        }
+        List<Music> musics = MusicDo.getMusics();
         return Response.ok().entity(musics).build();
     }
 
