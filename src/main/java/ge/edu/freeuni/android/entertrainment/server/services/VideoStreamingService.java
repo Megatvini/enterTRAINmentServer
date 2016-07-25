@@ -19,11 +19,22 @@ import java.util.Date;
 @Path("mediastream")
 public class VideoStreamingService {
     @GET
-    @Path("{filename}")
-    @Produces("video/mp4")
+    @Path("audio/{filename}")
+    @Produces("audion/mp3")
     public Response streamAudio(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
-        File file = Utils.getFileFromResources(filename);
+        File file = Utils.getFileFromResources("music/"+filename);
+        if (file == null)
+            throw new FileNotFoundException();
+
+        return buildStream(file, range);
+    }
+    @GET
+    @Path("video/{filename}")
+    @Produces("audion/mp4")
+    public Response streamVideo(@HeaderParam("Range") String range,
+                                @PathParam("filename")  String filename) throws Exception {
+        File file = Utils.getFileFromResources("video/"+filename);
         if (file == null)
             throw new FileNotFoundException();
 

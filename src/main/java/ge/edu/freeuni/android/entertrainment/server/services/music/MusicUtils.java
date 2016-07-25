@@ -1,6 +1,7 @@
 package ge.edu.freeuni.android.entertrainment.server.services.music;
 
 
+import ge.edu.freeuni.android.entertrainment.server.Utils;
 import ge.edu.freeuni.android.entertrainment.server.services.music.DO.MusicDo;
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.Music;
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.SharedMusicSocketMessage;
@@ -11,6 +12,7 @@ import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 
@@ -19,6 +21,10 @@ public class MusicUtils {
 
     public static String getName(String fileName){
         File file = new File(fileName);
+        return nameFromFile(file);
+    }
+
+    public static String nameFromFile(File file) {
         AudioFileFormat fileFormat;
         try {
             fileFormat = AudioSystem.getAudioFileFormat(file);
@@ -109,5 +115,14 @@ public class MusicUtils {
         }
                 s+="]";
         return s;
+    }
+
+    public static File[] filesList(){
+        File fileFromResources = Utils.getFileFromResources("music");
+
+        if (fileFromResources != null) {
+           return fileFromResources.listFiles();
+        }
+        return new File[0];
     }
 }

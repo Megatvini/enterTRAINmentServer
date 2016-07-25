@@ -10,9 +10,11 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +22,7 @@ import java.util.UUID;
 @Produces("application/json")
 @Path("songs")
 public class MusicService {
+    private static final  String defaultImagePath = "http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg";
 
     @GET
     @Path("shared")
@@ -37,7 +40,14 @@ public class MusicService {
     @GET
     @Path("offered")
     public Response offeredMusics(){
-        List<Music> musics = MusicDo.getMusics();
+        File[] files = MusicUtils.filesList();
+        List<Music> musics = new ArrayList<>();
+        for (File file: files){
+            String name = MusicUtils.nameFromFile(file);
+            String name1 = file.getName();
+            Music music = new Music(0,name1,name,0,defaultImagePath);
+            musics.add(music);
+        }
         return Response.ok().entity(musics).build();
     }
 
@@ -79,7 +89,8 @@ public class MusicService {
         String id = UUID.randomUUID().toString();
         String name = MusicUtils.getName(tmp);
         int duration = (int) MusicUtils.getDurationWithMagic(tmp);
-        Music music = new Music(duration,id, name,0,"http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg");
+
+        Music music = new Music(duration,id, name,0,defaultImagePath);
         MusicDo.saveMusic(music,fileBytes);
         Music music1 = MusicDo.getMusic(id);
         System.out.println(music1);
