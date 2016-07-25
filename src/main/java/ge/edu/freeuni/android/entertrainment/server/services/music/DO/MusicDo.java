@@ -135,13 +135,45 @@ public class MusicDo {
         try {
             if (connection != null) {
                 Statement statement = connection.createStatement();
+
                 String sql = "UPDATE MUSICS SET RATING = RATING +"+dif+" WHERE ID = '"+musicId+"'";
                 statement.executeUpdate(sql);
+
+                ///////////////////////
+                sql = "DELETE FROM VOTES WHERE MUSIC_ID = ? and IP = ?";
+                PreparedStatement pstm1 = connection.prepareStatement(sql);
+                pstm1.setString(1,musicId);
+                pstm1.setString(2,ip);
+                pstm1.executeUpdate();
+                ///////////////
+
                 sql = "INSERT INTO VOTES (MUSIC_ID , VOTE, IP) VALUES (?,?,?)";
                 PreparedStatement pstm = connection.prepareStatement(sql);
                 pstm.setString(1,musicId);
                 pstm.setString(2,vote);
                 pstm.setString(3,ip);
+                pstm.executeUpdate();
+
+                ////////////////
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static void resetRating(String musicId){
+        Connection connection =  getConnection();
+        try {
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                String sql = "UPDATE MUSICS SET RATING = 0  WHERE ID = '"+musicId+"'";
+                statement.executeUpdate(sql);
+                sql = "DELETE FROM VOTES WHERE MUSIC_ID = ?";
+                PreparedStatement pstm = connection.prepareStatement(sql);
+                pstm.setString(1,musicId);
                 pstm.executeUpdate();
                 connection.close();
             }

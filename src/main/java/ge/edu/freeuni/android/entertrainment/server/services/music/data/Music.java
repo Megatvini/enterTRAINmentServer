@@ -108,4 +108,17 @@ public class Music  implements Cloneable{
     }
 
 
+    public String toJson(){
+        return String.format("{\"name\":\"%s\",\"id\":\"%s\",\"rating\":%d,\"imagePath\":\"%s\",\"voted\":\"%s\"}",
+
+                name,
+                id,
+                rating,
+                imagePath,
+                voted
+        );
+    }
+
+
+
 }

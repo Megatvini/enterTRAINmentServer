@@ -7,12 +7,13 @@ import ge.edu.freeuni.android.entertrainment.server.services.music.data.MusicHol
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,19 +22,32 @@ import java.util.UUID;
 @Produces("application/json")
 @Path("songs")
 public class MusicService {
+    public static final  String defaultImagePath = "http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg";
 
     @GET
     @Path("shared")
-    public Response sharedMusic(){
-        List<Music> musics = MusicDo.getMusics();
-        MusicUtils.sortMusics(musics);
-        return Response.ok().entity(musics).build();
+    public Response sharedMusic(@Context HttpServletRequest  req) throws CloneNotSupportedException {
+        return playListData(req);
     }
+
+    private Response playListData(@Context HttpServletRequest req) {
+        String ip  = req.getRemoteAddr();
+        List<Music> resultMusics = MusicUtils.getResultMusics(ip);
+        MusicUtils.sortMusics(resultMusics);
+        return Response.ok().entity(resultMusics).build();
+    }
+
     @GET
     @Path("offered")
     public Response offeredMusics(){
-        List<Music> musics = MusicDo.getMusics();
-        MusicUtils.sortMusics(musics);
+        File[] files = MusicUtils.filesList("music");
+        List<Music> musics = new ArrayList<>();
+        for (File file: files){
+            String name = MusicUtils.nameFromFile(file);
+            String name1 = file.getName();
+            Music music = new Music(0,name1,name,0,defaultImagePath);
+            musics.add(music);
+        }
         return Response.ok().entity(musics).build();
     }
 
@@ -42,50 +56,27 @@ public class MusicService {
     @POST
     @Path("shared/{songId}/upvote")
     public Response upVote(@PathParam("songId") String songId, @Context HttpServletRequest req) throws CloneNotSupportedException {
-        System.out.println("upvote");
         String ip = req.getRemoteAddr();
-        MusicDo.vote(songId,1,"up",ip);
-        ArrayList<Music> resultMusics = getResultMusics(ip);
-        MusicUtils.sortMusics(resultMusics);
-        return Response.ok().entity(resultMusics).build();
-
-    }
-
-
-    private ArrayList<Music> getResultMusics(String ip) throws CloneNotSupportedException {
-        List<Music> musics = MusicDo.getMusics();
-        ArrayList<Music> resultMusics = new ArrayList<>();
-        if (musics != null) {
-            for (Music music1 : musics){
-                Music music2 = music1.clone();
-                if (downvoted(ip,music1)) {
-                    music2.setVoted("up");
-                }else if(upvoted(ip,music1))
-                    music2.setVoted("down");
-                else
-                    music2.setVoted("null");
-                resultMusics.add(music2);
-            }
+        if(!MusicUtils.upvoted(ip,songId)) {
+            MusicDo.vote(songId, 1, "up", ip);
         }
-        return resultMusics;
+//        SharedMusicService.updateAll();
+
+        return playListData(req);
+
     }
 
-    private boolean upvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("up");
-    }
 
-    private boolean downvoted(String id, Music music){
-        return MusicDo.getVote(id,music.getId()).equals("down");
-    }
 
     @POST
-    @Path("{songId}/downvote")
+    @Path("shared/{songId}/downvote")
     public Response downVote(@PathParam("songId") String songId, @Context HttpServletRequest req ) throws CloneNotSupportedException {
         String ip = req.getRemoteAddr();
-        MusicDo.vote(songId,-1,"down",ip);
-        ArrayList<Music> resultMusics = getResultMusics(ip);
-        MusicUtils.sortMusics(resultMusics);
-        return Response.ok().entity(resultMusics).build();
+        if  (!MusicUtils.downvoted(ip,  songId)) {
+            MusicDo.vote(songId, -1, "down", ip);
+        }
+//        SharedMusicService.updateAll();
+        return playListData(req);
     }
 
     @PUT
@@ -96,11 +87,15 @@ public class MusicService {
         String tmp= "/tmp/temp.mp3";
         writeFile(fileBytes, tmp);
         String id = UUID.randomUUID().toString();
-        Music music = new Music((int) MusicUtils.getDurationWithMagic(tmp),id,"random_name",0,"");
+        String name = MusicUtils.getName(tmp);
+        int duration = (int) MusicUtils.getDurationWithMagic(tmp);
+
+        Music music = new Music(duration,id, name,0,defaultImagePath);
         MusicDo.saveMusic(music,fileBytes);
         Music music1 = MusicDo.getMusic(id);
         System.out.println(music1);
         MusicHolder.getInstance().init();
+        SharedMusicService.updateAll();
         return id;
     }
 
