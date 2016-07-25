@@ -1,6 +1,11 @@
 package ge.edu.freeuni.android.entertrainment.server.model;
 
+import ge.edu.freeuni.android.entertrainment.server.Utils;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Created by Nika Doghonadze
@@ -241,5 +246,32 @@ public class NameGenerator {
         String randomAdj = adjectives[random.nextInt(adjectives.length)];
         String randomNoun = nouns[random.nextInt(nouns.length)];
         return randomAdj + " " + randomNoun;
+    }
+
+    private static String getFile(String fileName) {
+
+        StringBuilder result = new StringBuilder("");
+
+        File file = Utils.getFileFromResources(fileName);
+
+        try (Scanner scanner = new Scanner(file)) {
+
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                result.append(line).append("\n");
+            }
+
+            scanner.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result.toString();
+    }
+
+    public static void main(String[] args) {
+        String file = new NameGenerator().getFile("nika.txt");
+        System.out.println(file);
     }
 }
