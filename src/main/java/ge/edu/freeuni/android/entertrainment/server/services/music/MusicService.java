@@ -22,7 +22,7 @@ import java.util.UUID;
 @Produces("application/json")
 @Path("songs")
 public class MusicService {
-    private static final  String defaultImagePath = "http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg";
+    public static final  String defaultImagePath = "http://www.clipartbest.com/cliparts/dcr/ao9/dcrao9oxi.jpeg";
 
     @GET
     @Path("shared")
@@ -40,7 +40,7 @@ public class MusicService {
     @GET
     @Path("offered")
     public Response offeredMusics(){
-        File[] files = MusicUtils.filesList();
+        File[] files = MusicUtils.filesList("music");
         List<Music> musics = new ArrayList<>();
         for (File file: files){
             String name = MusicUtils.nameFromFile(file);

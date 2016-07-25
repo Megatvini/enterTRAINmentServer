@@ -117,8 +117,8 @@ public class MusicUtils {
         return s;
     }
 
-    public static File[] filesList(){
-        File fileFromResources = Utils.getFileFromResources("music");
+    public static File[] filesList(String dir){
+        File fileFromResources = Utils.getFileFromResources(dir);
 
         if (fileFromResources != null) {
            return fileFromResources.listFiles();

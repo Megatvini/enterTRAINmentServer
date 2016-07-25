@@ -20,7 +20,7 @@ import java.util.Date;
 public class VideoStreamingService {
     @GET
     @Path("audio/{filename}")
-    @Produces("audion/mp3")
+    @Produces("audio/mp3")
     public Response streamAudio(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
         File file = Utils.getFileFromResources("music/"+filename);
@@ -31,7 +31,7 @@ public class VideoStreamingService {
     }
     @GET
     @Path("video/{filename}")
-    @Produces("audion/mp4")
+    @Produces("video/mp4")
     public Response streamVideo(@HeaderParam("Range") String range,
                                 @PathParam("filename")  String filename) throws Exception {
         File file = Utils.getFileFromResources("video/"+filename);
@@ -53,13 +53,14 @@ public class VideoStreamingService {
                     try {
                         inputChannel.transferTo(0, inputChannel.size(), outputChannel);
                     } finally {
+
                         // closing the channels
                         inputChannel.close();
                         outputChannel.close();
                     }
                 }
             };
-            return Response.ok(streamer).status(200).header(HttpHeaders.CONTENT_LENGTH, asset.length()).build();
+            return Response.ok(streamer).status(200).header(HttpHeaders.CONTENT_LENGTH, asset.length()).header("Accept-Ranges","bytes").build();
         }
 
         String[] ranges = range.split("=")[1].split("-");
@@ -67,7 +68,7 @@ public class VideoStreamingService {
         /**
          * Chunk media if the range upper bound is unspecified. Chrome sends "bytes=0-"
          */
-        int chunk_size = 2048;
+        int chunk_size = 204800000;
 
         int to = chunk_size + from;
         if (to >= asset.length()) {
