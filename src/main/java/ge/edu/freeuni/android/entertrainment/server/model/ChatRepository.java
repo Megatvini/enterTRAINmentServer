@@ -11,4 +11,5 @@ public interface ChatRepository {
     void clearEntries();
     void addNewUser(String username);
     boolean userExists(String username);
+    void replaceUsername(String oldName, String username);
 }
