@@ -39,9 +39,11 @@ public class MusicDo {
                 "(ID TEXT    PRIMARY KEY      NOT NULL," +
                 "MUSIC_NAME    TEXT             NOT NULL, " +
                 "RATING        INT              NOT NULL, " +
-                "IMAGE_PATH    TEXT," +
+                "IMAGE_PATH    TEXT,"+
                 "MUSIC_DATA    BYTEA           NOT NULL ," +
                 "DURATION   INT NOT NULL )";
+
+
 
         String createVotesTable = "CREATE TABLE IF NOT EXISTS VOTES  " +
                 "(ID SERIAL     PRIMARY KEY     NOT NULL," +
@@ -49,16 +51,59 @@ public class MusicDo {
                 "VOTE           TEXT            NOT NULL," +
                 "IP             TEXT            NOT NULL )";
 
+        String createVideosTable = "CREATE TABLE IF NOT EXISTS VIDEOS  " +
+                "(ID SERIAL     PRIMARY KEY     NOT NULL," +
+                "MUSIC_ID       TEXT             NOT NULL REFERENCES MUSICS(ID))";
+
+        String createAudioTable = "CREATE TABLE IF NOT EXISTS AUDIOS  " +
+                "(ID SERIAL     PRIMARY KEY     NOT NULL," +
+                "MUSIC_ID       TEXT             NOT NULL REFERENCES MUSICS(ID))";
 
         if (stmt != null) {
             stmt.executeUpdate(createMusicTable);
             stmt.executeUpdate(createVotesTable);
+            stmt.executeUpdate(createVideosTable);
+            stmt.executeUpdate(createAudioTable);
         }
         if (connection != null) {
             connection.close();
         }
 
 
+    }
+
+
+
+    public static void saveVideo(Music video){
+        Connection connection = getConnection();
+        try {
+            if (connection != null) {
+                String sql = "INSERT INTO VIDEOS (MUSIC_ID) "
+                        + "VALUES (?)";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1,video.getId());
+                statement.executeUpdate();
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveAudio(Music audio){
+        Connection connection = getConnection();
+        try {
+            if (connection != null) {
+                String sql = "INSERT INTO AUDIOS (MUSIC_ID) "
+                        + "VALUES (?)";
+                PreparedStatement statement = connection.prepareStatement(sql);
+                statement.setString(1,audio.getId());
+                statement.executeUpdate();
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Music getMusic(String musicId){
@@ -99,24 +144,6 @@ public class MusicDo {
                 if ( resultSet.next() ) {
                     byte[] res = resultSet.getBytes("MUSIC_DATA");
                     System.out.println(res.length);
-                    connection.close();
-                    return res;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    public static InputStream getMusicDataStream(String musicId){
-        Connection connection = getConnection();
-        try {
-            if (connection != null) {
-                Statement statement = connection.createStatement();
-                String query = "SELECT MUSICS.MUSIC_DATA FROM MUSICS  WHERE MUSICS.ID = '"+musicId+"'";
-                ResultSet resultSet = statement.executeQuery(query);
-                if ( resultSet.next() ) {
-                    InputStream res = resultSet.getBinaryStream("MUSIC_DATA");
                     connection.close();
                     return res;
                 }
@@ -203,12 +230,22 @@ public class MusicDo {
     }
 
     public static List<Music> getMusics(){
+        String query = "SELECT MUSICS.ID, MUSIC_NAME, RATING, IMAGE_PATH, DURATION FROM MUSICS,AUDIOS WHERE MUSICS.ID = AUDIOS.MUSIC_ID";
+
+        return getMusics(query);
+    }
+
+    public static List<Music> getVideos(){
+        String query = "SELECT MUSICS.ID, MUSIC_NAME, RATING, IMAGE_PATH, DURATION FROM MUSICS, VIDEOS WHERE MUSICS.ID = VIDEOS.MUSIC_ID";
+
+        return getMusics(query);
+    }
+
+    public static List<Music> getMusics(String query) {
         Connection connection = getConnection();
         try {
             if (connection != null) {
-
                 Statement statement = connection.createStatement();
-                String query = "SELECT ID, MUSIC_NAME, RATING, IMAGE_PATH, DURATION FROM MUSICS";
                 ResultSet resultSet = statement.executeQuery(query);
                 List<Music> ans = new ArrayList<>();
                 while ( resultSet.next() ) {
