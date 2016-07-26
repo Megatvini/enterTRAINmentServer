@@ -31,14 +31,13 @@ public class MoviesService {
     @PUT
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.TEXT_PLAIN)
-    public String addMovie(byte[] fileBytes) throws IOException {
+    public String addMovie(byte[] fileBytes,  @DefaultValue("unknown") @QueryParam("name") String videoName) throws IOException {
 
         String tmp = "/tmp/temp.mp4";
         writeFile(fileBytes, tmp);
         String id = UUID.randomUUID().toString();
-        String name = MusicUtils.getName(tmp);
         int duration = (int) MusicUtils.getDurationWithMagic(tmp);
-        Music music = new Music(duration,id, name,0,defaultImagePath);
+        Music music = new Music(duration,id, videoName,0,defaultImagePath);
         MusicDo.saveMusic(music,fileBytes);
         MusicDo.saveVideo(music);
         return id;

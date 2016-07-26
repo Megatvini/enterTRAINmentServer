@@ -75,16 +75,16 @@ public class MusicService {
         return playListData(req);
     }
 
+
     @PUT
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public String upload(byte[] fileBytes) throws IOException {
+    public String upload(byte[] fileBytes,  @DefaultValue("unknown") @QueryParam("name") String songName) throws IOException {
         String tmp= "/tmp/temp.mp3";
         writeFile(fileBytes, tmp);
         String id = UUID.randomUUID().toString();
-        String name = MusicUtils.getName(tmp);
         int duration = (int) MusicUtils.getDurationWithMagic(tmp);
-        Music music = new Music(duration,id, name,0,defaultImagePath);
+        Music music = new Music(duration,id, songName,0,defaultImagePath);
         MusicDo.saveMusic(music,fileBytes);
         MusicDo.saveAudio(music);
         MusicHolder.getInstance().init();
