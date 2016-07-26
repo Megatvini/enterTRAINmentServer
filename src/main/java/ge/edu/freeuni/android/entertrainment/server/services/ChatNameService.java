@@ -41,4 +41,16 @@ public class ChatNameService {
         repository.addNewUser(randomName);
         return randomName;
     }
+
+	@GET
+	@Path("check/{username}")
+	public Response post(@PathParam("username") String username) {
+		ChatRepository repository = getRepository();
+		if (repository.userExists(username)) {
+			throw new NotFoundException();
+		} else {
+			repository.addNewUser(username);
+			return Response.ok().build();
+		}
+	}
 }
