@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import static ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils.writeFile;
+
 @Consumes("application/json")
 @Produces("application/json")
 @Path("songs")
@@ -77,26 +79,20 @@ public class MusicService {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public String upload(byte[] fileBytes) throws IOException {
-        System.out.println(fileBytes.length);
         String tmp= "/tmp/temp.mp3";
         writeFile(fileBytes, tmp);
         String id = UUID.randomUUID().toString();
         String name = MusicUtils.getName(tmp);
         int duration = (int) MusicUtils.getDurationWithMagic(tmp);
-
         Music music = new Music(duration,id, name,0,defaultImagePath);
         MusicDo.saveMusic(music,fileBytes);
-        Music music1 = MusicDo.getMusic(id);
-        System.out.println(music1);
+        MusicDo.saveAudio(music);
         MusicHolder.getInstance().init();
         SharedMusicService.updateAll();
         return id;
     }
 
-    private void writeFile(byte[] fileBytes, String tmp) throws IOException {
-        java.nio.file.Path file = Paths.get(tmp);
-        Files.write(file, fileBytes);
-    }
+
 
 
 }

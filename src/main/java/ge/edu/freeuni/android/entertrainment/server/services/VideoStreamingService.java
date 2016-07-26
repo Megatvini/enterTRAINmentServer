@@ -1,20 +1,11 @@
 package ge.edu.freeuni.android.entertrainment.server.services;
 
-import ge.edu.freeuni.android.entertrainment.server.Utils;
-import ge.edu.freeuni.android.entertrainment.server.model.MediaStreamer;
 import ge.edu.freeuni.android.entertrainment.server.services.music.DO.MusicDo;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import java.io.*;
-import java.net.URLDecoder;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Nika Doghonadze
@@ -41,7 +32,6 @@ public class VideoStreamingService {
     }
 
     private Response buildStream(final String  fileName, final String range) throws Exception {
-        // range not requested : Firefox, Opera, IE do not send range headers
         byte[] musicData = MusicDo.getMusicData(fileName);
         if (musicData == null){
             return Response.serverError().build();
@@ -52,9 +42,6 @@ public class VideoStreamingService {
 
         String[] ranges = range.split("=")[1].split("-");
         final int from = Integer.parseInt(ranges[0]);
-        /**
-         * Chunk media if the range upper bound is unspecified. Chrome sends "bytes=0-"
-         */
         int chunk_size = 204800000;
 
         int to = chunk_size + from;

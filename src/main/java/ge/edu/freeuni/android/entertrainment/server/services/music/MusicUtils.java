@@ -14,6 +14,8 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class MusicUtils {
@@ -124,5 +126,10 @@ public class MusicUtils {
            return fileFromResources.listFiles();
         }
         return new File[0];
+    }
+
+    public static void writeFile(byte[] fileBytes, String tmp) throws IOException {
+        java.nio.file.Path file = Paths.get(tmp);
+        Files.write(file, fileBytes);
     }
 }
