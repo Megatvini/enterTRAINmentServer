@@ -42,7 +42,7 @@ public class ChatNameService {
 
 	@GET
 	@Path("check/{username}")
-	public Response post(@PathParam("username") String username, @FormParam("oldname") String oldname) {
+	public Response post(@PathParam("username") String username, @QueryParam("oldname") String oldname) {
 		ChatRepository repository = getRepository();
 		if (repository.userExists(username)) {
 			throw new NotFoundException();
