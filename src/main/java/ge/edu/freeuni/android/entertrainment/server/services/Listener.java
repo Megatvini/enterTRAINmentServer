@@ -30,10 +30,11 @@ public class Listener implements ServletContextListener,
     public void contextInitialized(ServletContextEvent sce) {
 
         try {
+            Class.forName("org.postgresql.Driver");
             MusicDo.createDatabase();
             SharedData.getInstance().init();
             new DataUpdater().start();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 

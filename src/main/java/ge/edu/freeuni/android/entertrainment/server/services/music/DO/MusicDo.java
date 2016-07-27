@@ -17,17 +17,14 @@ public class MusicDo {
         String dbUrl = System.getenv("JDBC_DATABASE_URL");
         try {
             if(dbUrl == null){
-                Class.forName("org.postgresql.Driver");
                 return DriverManager
                         .getConnection("jdbc:postgresql://localhost:5432/music",
                                 "postgres", "123");
             }
             return DriverManager.getConnection(dbUrl);
-        }catch (SQLException | ClassNotFoundException e){
+        }catch (SQLException e){
             e.printStackTrace();
         }
-
-
         return null;
     }
 

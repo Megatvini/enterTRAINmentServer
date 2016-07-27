@@ -16,7 +16,6 @@ import java.util.UUID;
 
 import static ge.edu.freeuni.android.entertrainment.server.services.music.MusicUtils.writeFile;
 
-@Consumes("application/json")
 @Produces("application/json")
 @Path("songs")
 public class MusicService {
@@ -25,6 +24,7 @@ public class MusicService {
     @GET
     @Path("shared")
     public Response sharedMusic(@Context HttpServletRequest  req, @DefaultValue("unknown") @QueryParam("id") String id) throws CloneNotSupportedException {
+        System.out.println(id);
         return playListData(id);
     }
 
@@ -46,11 +46,12 @@ public class MusicService {
     @POST
     @Path("shared/{songId}/upvote")
     public Response upVote(@PathParam("songId") String songId,
-                           @DefaultValue("unknown") @QueryParam("id") String id) throws CloneNotSupportedException {
+                           @DefaultValue("unknown") @FormParam("id") String id) throws CloneNotSupportedException {
+        System.out.println("upvote");
         if(!MusicUtils.upvoted(id,songId)) {
             MusicDo.vote(songId, 1, "up", id);
+            SharedMusicService.updateAll();
         }
-        SharedMusicService.updateAll();
         return Response.ok().build();
 
     }
@@ -60,14 +61,15 @@ public class MusicService {
     @POST
     @Path("shared/{songId}/downvote")
     public Response downVote(@PathParam("songId") String songId,
-                             @DefaultValue("unknown") @QueryParam("id") String id
+                             @DefaultValue("unknown") @FormParam("id") String id
     ) throws CloneNotSupportedException {
         if  (!MusicUtils.downvoted(id,  songId)) {
-            if(notZero(songId))
+            if(notZero(songId)) {
                 MusicDo.vote(songId, -1, "down", id);
+                SharedMusicService.updateAll();
+            }
         }
-        SharedMusicService.updateAll();
-        return   Response.ok().build();
+        return Response.ok().build();
     }
 
     private boolean notZero(String songId) {
