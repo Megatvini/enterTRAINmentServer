@@ -42,6 +42,17 @@ public class GroupChatRepository implements ChatRepository {
         return users.contains(username);
     }
 
+    @Override
+    public void replaceUsername(String oldName, String username) {
+        for (ChatEntry chatEntry : chatEntryTreeSet) {
+            if (chatEntry.getUsername().equals(oldName)) {
+                chatEntry.setUsername(username);
+            }
+        }
+        users.remove(oldName);
+        users.add(username);
+    }
+
     public static synchronized GroupChatRepository getInstance() {
         if (instance == null) {
             Set<ChatEntry> chatEntryTreeSet = Collections.synchronizedSet(new TreeSet<>(new Comparator<ChatEntry>() {
@@ -51,7 +62,12 @@ public class GroupChatRepository implements ChatRepository {
                 }
             }));
 
-            Set<String> users = new HashSet<>();
+            Set<String> users = new TreeSet<>(new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.compareToIgnoreCase(o2);
+                }
+            });
 
             instance = new GroupChatRepository(users, chatEntryTreeSet);
         }
