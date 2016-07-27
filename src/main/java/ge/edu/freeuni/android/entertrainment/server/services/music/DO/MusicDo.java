@@ -3,12 +3,15 @@ package ge.edu.freeuni.android.entertrainment.server.services.music.DO;
 
 import ge.edu.freeuni.android.entertrainment.server.services.music.data.Music;
 
-import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class MusicDo {
+
+    private static Lock voteLock = new ReentrantLock();
 
     private static Connection getConnection() {
         String dbUrl = System.getenv("JDBC_DATABASE_URL");
@@ -32,6 +35,9 @@ public class MusicDo {
 
 
     public static void createDatabase() throws SQLException {
+
+
+
         Connection connection =getConnection();
         Statement
                 stmt = connection != null ? connection.createStatement() : null;
@@ -176,8 +182,9 @@ public class MusicDo {
     }
 
     public static void vote(String musicId, int dif, String vote, String ip){
-        Connection connection =  getConnection();
 
+        voteLock.lock();
+        Connection connection =  getConnection();
         try {
             if (connection != null) {
                 Statement statement = connection.createStatement();
@@ -205,6 +212,9 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        finally {
+            voteLock.unlock();
         }
 
     }
@@ -267,6 +277,8 @@ public class MusicDo {
     }
 
     public static String getVote(String ip, String musicId) {
+        voteLock.lock();
+        String vote = "null";
         Connection connection =  getConnection();
         try {
             if (connection != null) {
@@ -276,14 +288,17 @@ public class MusicDo {
                 pstm.setString(2,ip);
                 ResultSet resultSet = pstm.executeQuery();
                 if(resultSet.next()){
-                    connection.close();
-                    return resultSet.getString("VOTE");
+                    vote = resultSet.getString("VOTE");
                 }
                 connection.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return "null";
+        finally {
+            voteLock.unlock();
+        }
+        return vote;
+
     }
 }
