@@ -73,6 +73,7 @@ public class MusicDo {
         }
         if (connection != null) {
             connection.close();
+
         }
 
 
@@ -93,6 +94,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -109,6 +115,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -133,6 +144,11 @@ public class MusicDo {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
 
         return null;
@@ -156,6 +172,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
         return null;
     }
@@ -178,6 +199,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -211,11 +237,17 @@ public class MusicDo {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
             voteLock.unlock();
+            e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
+
+        voteLock.unlock();
+
 
     }
 
@@ -235,6 +267,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
 
     }
@@ -272,6 +309,11 @@ public class MusicDo {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
         return null;
     }
@@ -293,11 +335,17 @@ public class MusicDo {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
             voteLock.unlock();
+            e.printStackTrace();
+            try {
+                connection.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
         }
+
+        voteLock.unlock();
+
         return vote;
 
     }
